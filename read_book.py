@@ -39,7 +39,7 @@ def search_isbn(isbn):
     #try:
     with open('book_db.csv', 'rb') as fp_book_db:
         data_reader = csv.DictReader(fp_book_db)
-        print data_reader
+        #print data_reader
 
         flg_book_cache = False
         for row in data_reader:
@@ -93,23 +93,22 @@ else:
 
 total_pages = float(page_count)
 
-print "title: " + title
-print "total pages: " + str(total_pages)
-print "start date: " + start_date
-
 dt_start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
 dt_today = datetime.date.today()
 num_of_days_read =  (dt_today - dt_start_date.date()).days +1
-print "read pages: " + str(read_pages) + " (" + str(round(read_pages/total_pages,2)) + ") elapsed: " + str(num_of_days_read) + " days"
-
 pages_per_day = round(read_pages/(dt_today - dt_start_date.date()).days,2)
-print "avg: pp." + str(pages_per_day) + "/day"
-
 num_of_days_complete = math.floor((total_pages / pages_per_day) +1)
-print "number of date to complete: " + str(num_of_days_complete) + " days"
-
 left_days = num_of_days_complete - num_of_days_read
-print "left days: " + str(left_days) + " days"
-
 dt_scheduled_date = dt_today + datetime.timedelta(days=left_days)
-print "scheduled date: " + dt_scheduled_date.strftime("%Y-%m-%d")
+
+print "title: " + title,
+print "(total pages: " + str(total_pages) + ")"
+print "start date: " + start_date,
+print " / ",
+print dt_today,
+print "(elapsed:" + str(num_of_days_read) + " days)"
+print "read pages: " + str(read_pages) + " (" + str(round(read_pages/total_pages,2)) + ")",
+print "avg: pp." + str(pages_per_day) + "/day"
+#print "number of date to complete: " + str(num_of_days_complete) + " days"
+print "scheduled date: " + dt_scheduled_date.strftime("%Y-%m-%d"),
+print "/ left days: " + str(left_days) + " days"
