@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 
+"""
+Reading Process Calc.
+"""
 # ToDo
 # add args check -> 10/14 sat done
 # add usage -> 10/16 mon done
 # cache func. -> 10/18 wed done
 # cache save(csv) -> 10/19 thu done
 # file open with "with" statement -> 10/19 thu
+# support iOS/Android
+# support twitter
 
 # error message with "with" statement
 # google api err handling
@@ -21,27 +26,20 @@ import urllib
 import json
 import csv
 
-st_desc = "sample desc."
-st_usage = "python read_book.py <yyyy-mm-dd> <isbn> <read_pages>"
-parser = argparse.ArgumentParser(description=st_desc, usage=st_usage)
-parser.add_argument('sd')
-parser.add_argument('isbn', type=int)
-parser.add_argument('pages', type=int)
-args = parser.parse_args()
-#print(args)
-
 def save_cache(dic_new_book_data):
+    """ save_cache """
     print type(dic_new_book_data),dic_new_book_data
     with open('book_db.csv', mode = 'a') as fp_book_db:
          fp_book_db.write(str(dic_new_book_data['isbn'])+','+dic_new_book_data['title'].encode('utf-8')+','+str(dic_new_book_data['pp'])+'\n')
 
 def search_isbn(isbn):
+    """search_isbn"""
     #try:
+    flg_book_cache = False
     with open('book_db.csv', 'rb') as fp_book_db:
         data_reader = csv.DictReader(fp_book_db)
         #print data_reader
 
-        flg_book_cache = False
         for row in data_reader:
             #print type(row),row
             if row['isbn'] == isbn:
@@ -53,7 +51,7 @@ def search_isbn(isbn):
         #print('i have no cache file')
         #sys.exit()
 
-    if flg_book_cache == False:
+    if not bool(flg_book_cache):
         print 'i have no cache data'
         data = get_book_data(isbn)
         title = data["items"][0]["volumeInfo"]["title"]
@@ -68,12 +66,21 @@ def search_isbn(isbn):
 
 def get_book_data(isbn):
     url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn
-    paramStr = ""
-    readObj = urllib.urlopen(url + paramStr)
-    res = readObj.read()
+    param_str = ""
+    read_obj = urllib.urlopen(url + param_str)
+    res = read_obj.read()
     res_json = json.loads(res)
 
     return res_json
+
+ST_DESC = "sample desc."
+ST_USAGE = "python read_book.py <yyyy-mm-dd> <isbn> <read_pages>"
+parser = argparse.ArgumentParser(description=ST_DESC, usage=ST_USAGE)
+parser.add_argument('sd')
+parser.add_argument('isbn', type=int)
+parser.add_argument('pages', type=int)
+args = parser.parse_args()
+#print(args)
 
 args = sys.argv
 
@@ -99,7 +106,7 @@ num_of_days_read =  (dt_today - dt_start_date.date()).days +1
 pages_per_day = round(read_pages/(dt_today - dt_start_date.date()).days,2)
 num_of_days_complete = math.floor((total_pages / pages_per_day) +1)
 left_days = num_of_days_complete - num_of_days_read
-dt_scheduled_date = dt_today + datetime.timedelta(days=left_days)
+dt_expected_date = dt_today + datetime.timedelta(days=left_days)
 
 print "title: " + title,
 print "(total pages: " + str(total_pages) + ")"
@@ -107,8 +114,8 @@ print "start date: " + start_date,
 print " / ",
 print dt_today,
 print "(elapsed:" + str(num_of_days_read) + " days)"
-print "read pages: " + str(read_pages) + " (" + str(round(read_pages/total_pages,2)) + ")",
+print "read pages: " + str(read_pages) + " (" + str(round(read_pages/total_pages, 2)) + ")",
 print "avg: pp." + str(pages_per_day) + "/day"
 #print "number of date to complete: " + str(num_of_days_complete) + " days"
-print "scheduled date: " + dt_scheduled_date.strftime("%Y-%m-%d"),
+print "exptected date: " + dt_expected_date.strftime("%Y-%m-%d"),
 print "/ left days: " + str(left_days) + " days"
