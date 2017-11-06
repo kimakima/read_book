@@ -9,14 +9,14 @@ Reading Process Calc.
 # cache func. -> 10/18 wed done
 # cache save(csv) -> 10/19 thu done
 # file open with "with" statement -> 10/19 thu
+# add __name__ == '__main__' -> 11/5 sun
+
 # support iOS/Android
 # support twitter
-
 # error message with "with" statement
 # google api err handling
 # cache database(sqlite)
 # i18n
-# add __name__ == '__main__'
 
 import argparse
 import sys
@@ -28,7 +28,7 @@ import csv
 
 def save_cache(dic_new_book_data):
     """ save_cache """
-    print type(dic_new_book_data),dic_new_book_data
+    print type(dic_new_book_data), dic_new_book_data
     with open('book_db.csv', mode = 'a') as fp_book_db:
          fp_book_db.write(str(dic_new_book_data['isbn'])+','+dic_new_book_data['title'].encode('utf-8')+','+str(dic_new_book_data['pp'])+'\n')
 
@@ -65,6 +65,7 @@ def search_isbn(isbn):
     return [title, page_count]
 
 def get_book_data(isbn):
+    """ get_book_data """
     url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn
     param_str = ""
     read_obj = urllib.urlopen(url + param_str)
@@ -73,49 +74,54 @@ def get_book_data(isbn):
 
     return res_json
 
-ST_DESC = "sample desc."
-ST_USAGE = "python read_book.py <yyyy-mm-dd> <isbn> <read_pages>"
-parser = argparse.ArgumentParser(description=ST_DESC, usage=ST_USAGE)
-parser.add_argument('sd')
-parser.add_argument('isbn', type=int)
-parser.add_argument('pages', type=int)
-args = parser.parse_args()
-#print(args)
+def main():
+    """main"""
+    ST_DESC = "sample desc."
+    ST_USAGE = "python read_book.py <yyyy-mm-dd> <isbn> <read_pages>"
+    parser = argparse.ArgumentParser(description=ST_DESC, usage=ST_USAGE)
+    parser.add_argument('sd')
+    parser.add_argument('isbn', type=int)
+    parser.add_argument('pages', type=int)
+    args = parser.parse_args()
+    #print(args)
 
-args = sys.argv
+    args = sys.argv
 
-start_date = args[1]
-isbn = args[2]
-read_pages = float(args[3])
+    start_date = args[1]
+    isbn = args[2]
+    read_pages = float(args[3])
 
-title, page_count = search_isbn(isbn)
+    title, page_count = search_isbn(isbn)
 
-if False:
-    data = get_book_data(isbn)
+    if False:
+        data = get_book_data(isbn)
 
-    title = data["items"][0]["volumeInfo"]["title"]
-    page_count = data["items"][0]["volumeInfo"]["pageCount"]
-else:
-    pass
+        title = data["items"][0]["volumeInfo"]["title"]
+        page_count = data["items"][0]["volumeInfo"]["pageCount"]
+    else:
+        pass
 
-total_pages = float(page_count)
+    total_pages = float(page_count)
 
-dt_start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-dt_today = datetime.date.today()
-num_of_days_read =  (dt_today - dt_start_date.date()).days +1
-pages_per_day = round(read_pages/(dt_today - dt_start_date.date()).days,2)
-num_of_days_complete = math.floor((total_pages / pages_per_day) +1)
-left_days = num_of_days_complete - num_of_days_read
-dt_expected_date = dt_today + datetime.timedelta(days=left_days)
+    dt_start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    dt_today = datetime.date.today()
+    num_of_days_read =  (dt_today - dt_start_date.date()).days + 1
+    pages_per_day = round(read_pages/(dt_today - dt_start_date.date()).days, 2)
+    num_of_days_complete = math.floor((total_pages / pages_per_day) +1)
+    left_days = num_of_days_complete - num_of_days_read
+    dt_expected_date = dt_today + datetime.timedelta(days=left_days)
 
-print "title: " + title,
-print "(total pages: " + str(total_pages) + ")"
-print "start date: " + start_date,
-print " / ",
-print dt_today,
-print "(elapsed:" + str(num_of_days_read) + " days)"
-print "read pages: " + str(read_pages) + " (" + str(round(read_pages/total_pages, 2)) + ")",
-print "avg: pp." + str(pages_per_day) + "/day"
-#print "number of date to complete: " + str(num_of_days_complete) + " days"
-print "exptected date: " + dt_expected_date.strftime("%Y-%m-%d"),
-print "/ left days: " + str(left_days) + " days"
+    print "title: " + title,
+    print "(total pages: " + str(total_pages) + ")"
+    print "start date: " + start_date,
+    print " / ",
+    print dt_today,
+    print "(elapsed:" + str(num_of_days_read) + " days)"
+    print "read pages: " + str(read_pages) + " (" + str(round(read_pages/total_pages, 2)) + ")",
+    print "avg: pp." + str(pages_per_day) + "/day"
+    #print "number of date to complete: " + str(num_of_days_complete) + " days"
+    print "exptected date: " + dt_expected_date.strftime("%Y-%m-%d"),
+    print "/ left days: " + str(left_days) + " days"
+
+if __name__ == '__main__':
+    main()
