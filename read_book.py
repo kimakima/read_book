@@ -76,9 +76,9 @@ def get_book_data(isbn):
 
 def main():
     """main"""
-    ST_DESC = "sample desc."
-    ST_USAGE = "python read_book.py <yyyy-mm-dd> <isbn> <read_pages>"
-    parser = argparse.ArgumentParser(description=ST_DESC, usage=ST_USAGE)
+    st_desc = "sample desc."
+    st_usage = "python read_book.py <yyyy-mm-dd> <isbn> <read_pages>"
+    parser = argparse.ArgumentParser(description=st_desc, usage=st_usage)
     parser.add_argument('sd')
     parser.add_argument('isbn', type=int)
     parser.add_argument('pages', type=int)
@@ -93,22 +93,22 @@ def main():
 
     title, page_count = search_isbn(isbn)
 
-    if False:
-        data = get_book_data(isbn)
+    #if False:
+    #    data = get_book_data(isbn)
 
-        title = data["items"][0]["volumeInfo"]["title"]
-        page_count = data["items"][0]["volumeInfo"]["pageCount"]
-    else:
-        pass
+    #    title = data["items"][0]["volumeInfo"]["title"]
+    #    page_count = data["items"][0]["volumeInfo"]["pageCount"]
+    #else:
+    #    pass
 
     total_pages = float(page_count)
 
     dt_start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     dt_today = datetime.date.today()
     num_of_days_read =  (dt_today - dt_start_date.date()).days + 1
-    pages_per_day = round(read_pages/(dt_today - dt_start_date.date()).days, 2)
+    pages_per_day = round(read_pages/num_of_days_read, 2)
     num_of_days_complete = math.floor((total_pages / pages_per_day) +1)
-    left_days = num_of_days_complete - num_of_days_read
+    left_days = num_of_days_complete - num_of_days_read -1
     dt_expected_date = dt_today + datetime.timedelta(days=left_days)
 
     print "title: " + title,
