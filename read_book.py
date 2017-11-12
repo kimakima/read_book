@@ -10,7 +10,9 @@ Reading Process Calc.
 # cache save(csv) -> 10/19 thu done
 # file open with "with" statement -> 10/19 thu
 # add __name__ == '__main__' -> 11/5 sun
+# support json -> 11/11 sat
 
+# support input isbn via camera
 # support iOS/Android
 # support twitter
 # error message with "with" statement
@@ -105,11 +107,27 @@ def main():
 
     dt_start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     dt_today = datetime.date.today()
-    num_of_days_read =  (dt_today - dt_start_date.date()).days + 1
+    num_of_days_read = (dt_today - dt_start_date.date()).days + 1
     pages_per_day = round(read_pages/num_of_days_read, 2)
-    num_of_days_complete = math.floor((total_pages / pages_per_day) +1)
-    left_days = num_of_days_complete - num_of_days_read -1
+    num_of_days_complete = math.ceil((total_pages / pages_per_day))
+    left_days = num_of_days_complete - num_of_days_read
     dt_expected_date = dt_today + datetime.timedelta(days=left_days)
+
+    dct_result = {}
+    dct_result['title'] = title
+    dct_result['total_pages'] = total_pages
+    dct_result['start_date'] = start_date
+    dct_result['today'] = dt_today.strftime("%Y-%m-%d")
+    dct_result['read_pages'] = read_pages
+    dct_result['read_pct'] = round(read_pages/total_pages, 2)
+    dct_result['pages_per_day'] = pages_per_day
+    dct_result['expected_date'] = dt_expected_date.strftime("%Y-%m-%d")
+    dct_result['num_of_days_complete'] = num_of_days_complete
+    dct_result['num_of_days_elapsed'] = num_of_days_read
+    dct_result['num_of_days_left'] = left_days
+
+    json_result = json.dumps(dct_result, ensure_ascii=False)
+    print json_result
 
     print "title: " + title,
     print "(total pages: " + str(total_pages) + ")"
